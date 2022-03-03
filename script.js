@@ -1,69 +1,33 @@
-const form = document.querySelector("form");
-const input = document.querySelector("input");
-const todosUL = document.querySelector("todos");
-
-const todos = JSON.parse(localStorage.getItem("todos"));
-
-if (todos) {
-    todos.forEach((todo) => {
-        addTodo(todo);
-    });
-}
-
-form.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    addTodo();
-});
-
-function addTodo(todo) {
-    let todoText = input.value;
-
-    if (todo) {
-        todoText = todo.text;
+document.querySelector('#push').onclick = function(){
+    if(document.querySelector('#newtask input').value.length == 0){
+        alert("Please Enter a Task")
     }
+    else{
+        document.querySelector('#tasks').innerHTML += `
+            <div class="task">
+                <span id="taskname">
+                    ${document.querySelector('#newtask input').value}
+                </span>
+                <button class="delete">
+                    <i class="far fa-trash-alt"></i>
+                </button>
+            </div>
+        `;
 
-    if (todoText) {
-        const todoEl = document.createElement("li");
-        if (todo && todo.completed) {
-            todoEl.classList.add("completed");
+        const current_tasks = document.querySelectorAll(".delete");
+        for(let i=0; i<current_tasks.length; i++){
+            current_tasks[i].onclick = function(){
+                this.parentNode.remove();
+            }
         }
 
-        todoEl.innerText = todoText;
+        const tasks = document.querySelectorAll(".task");
+        for(let i=0; i<tasks.length; i++){
+            tasks[i].onclick = function(){
+                this.classList.toggle('completed');
+            }
+        }
 
-        todoEl.addEventListener("click", () => {
-            todoEl.classList.toggle("completed");
-
-            updateLS();
-        });
-
-        todoEl.addEventListener("contextmenu", (e) => {
-            e.preventDefault();
-
-            todoEl.remove();
-
-            updateLS();
-        });
-
-        todosUL.appendChild(todoEl);
-
-        input.value = "";
-
-        updateLS();
+        document.querySelector("#newtask input").value = "";
     }
-}
-
-function updateLS() {
-    const todosEl = document.querySelectorAll("li");
-
-    const todos = [];
-
-    todosEl.forEach((todoEl) => {
-        todos.push({
-            text: todoEl.innerText,
-            completed: todoEl.classList.contains("completed"),
-        });
-    });
-
-    localStorage.setItem("todos", JSON.stringify(todos));
 }
